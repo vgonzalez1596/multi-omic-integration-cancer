@@ -24,9 +24,9 @@ Determine what insights can be learned about the biology of leukemia from integr
 ---
 
 ## Example Outputs
-[Confusion Matrix](results/confusion_matrix.png)
+[Variance Decomposition Analysis](results/figures/03_plot_variance_explained_by_factor.png)
 
-[Feature Importance](results/feature_importance.png)
+[Predicting somatic IGHV mutation using ML](results/figures/09_plot_factors_1_vs_3_IGHV_predictions.png)
 
 ---
 
