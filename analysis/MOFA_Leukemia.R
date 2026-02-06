@@ -15,6 +15,21 @@
 # Portfolio touch: create an output directory for saved figures
 dir.create("results/figures", recursive = TRUE, showWarnings = FALSE)
 
+# Helper: reliably save a plot by opening a PNG device and drawing into it
+# (avoids RStudio device timing issues when running via source())
+save_plot_png <- function(filename, expr, width = 2100, height = 1500, res = 300) {
+  png(filename, width = width, height = height, res = res)
+  on.exit(dev.off(), add = TRUE)
+  
+  # Run the plotting code
+  p <- eval.parent(substitute(expr))
+  
+  # If a ggplot-like object is returned, explicitly print it
+  if (inherits(p, c("gg", "ggplot"))) print(p)
+  
+  invisible(p)
+}
+
 # First, we load in the libraries and datasets. 
 library(MOFA2)        # Core MOFA2 package for multi-omics factor analysis
 library(MOFAdata)     # Example datasets used in MOFA tutorials
@@ -46,12 +61,10 @@ MOFAobject <- create_mofa(CLL_data)
 MOFAobject
 
 # Plot the missing values and dimensionality per view
-p_data_overview <- plot_data_overview(MOFAobject)
-print(p_data_overview)
-ggsave(
-  filename = "results/figures/01_plot_data_overview.png",
-  plot = p_data_overview,
-  width = 8, height = 4, dpi = 300
+save_plot_png(
+  "results/figures/01_plot_data_overview.png",
+  plot_data_overview(MOFAobject),
+  width = 2400, height = 1200, res = 300
 )
 
 # Next we want to define the data arguments for the MOFA object
@@ -112,24 +125,20 @@ samples_metadata(MOFAobject) <- CLL_metadata
 
 # Sanity check- verify that factors are uncorrelated
 # If there is a lot of correlation between factors, the model is a poor fit
-p_factor_cor <- plot_factor_cor(MOFAobject)
-print(p_factor_cor)
-ggsave(
-  filename = "results/figures/02_plot_factor_cor.png",
-  plot = p_factor_cor,
-  width = 6, height = 5, dpi = 300
+save_plot_png(
+  "results/figures/02_plot_factor_cor.png",
+  plot_factor_cor(MOFAobject),
+  width = 2100, height = 1800, res = 300
 )
 
 # The most important insight that MOFA generates is the variance decomposition analysis. 
 # This plot shows the percentage of variance explained by each factor across each data modality (and group, if provided). 
 # It summarizes the sources of variation from a complex heterogeneous data set in a single figure.
 # Variance explained per factor and view
-p_var_by_factor <- plot_variance_explained(MOFAobject, max_r2 = 15)
-print(p_var_by_factor)
-ggsave(
-  filename = "results/figures/03_plot_variance_explained_by_factor.png",
-  plot = p_var_by_factor,
-  width = 7, height = 4, dpi = 300
+save_plot_png(
+  "results/figures/03_plot_variance_explained_by_factor.png",
+  plot_variance_explained(MOFAobject, max_r2 = 15),
+  width = 2400, height = 1200, res = 300
 )
 # We can see that drugs, methylation, and mutations explain most variation in Factor 1.
 # Then, drugs alone explains the variation in Factor 2. 
@@ -137,12 +146,10 @@ ggsave(
 
 # Next, we determine how much of the variance in each modality the model is able to explain. 
 # Total variance explained per modality
-p_var_total <- plot_variance_explained(MOFAobject, plot_total = TRUE)[[2]]
-print(p_var_total)
-ggsave(
-  filename = "results/figures/04_plot_variance_explained_total.png",
-  plot = p_var_total,
-  width = 7, height = 4, dpi = 300
+save_plot_png(
+  "results/figures/04_plot_variance_explained_total.png",
+  plot_variance_explained(MOFAobject, plot_total = TRUE)[[2]],
+  width = 2400, height = 1200, res = 300
 )
 ###############################################################################
 
@@ -158,33 +165,29 @@ ggsave(
 # We saw that mutations capture a lot of the variation in Factor 1, so 
 # let's plot the weights for the features in mutations Factor 1
 # Plot mutation weights for Factor 1
-p_mut_f1_weights <- plot_weights(
-  MOFAobject,
-  view = "Mutations",
-  factor = 1,
-  nfeatures = 10, # top features
-  scale = TRUE
-)
-print(p_mut_f1_weights)
-ggsave(
-  filename = "results/figures/05_plot_weights_mutations_factor1.png",
-  plot = p_mut_f1_weights,
-  width = 7, height = 4, dpi = 300
+save_plot_png(
+  "results/figures/05_plot_weights_mutations_factor1.png",
+  plot_weights(
+    MOFAobject,
+    view = "Mutations",
+    factor = 1,
+    nfeatures = 10, # top features
+    scale = TRUE
+  ),
+  width = 2400, height = 1200, res = 300
 )
 
 # Cleaner view showing only top weights
-p_mut_f1_topweights <- plot_top_weights(
-  MOFAobject,
-  view = "Mutations",
-  factor = 1,
-  nfeatures = 10,
-  scale = TRUE
-)
-print(p_mut_f1_topweights)
-ggsave(
-  filename = "results/figures/06_plot_top_weights_mutations_factor1.png",
-  plot = p_mut_f1_topweights,
-  width = 7, height = 4, dpi = 300
+save_plot_png(
+  "results/figures/06_plot_top_weights_mutations_factor1.png",
+  plot_top_weights(
+    MOFAobject,
+    view = "Mutations",
+    factor = 1,
+    nfeatures = 10,
+    scale = TRUE
+  ),
+  width = 2400, height = 1200, res = 300
 )
 # This shows us that a feature called IGHV is important for/influences CLL
 # Literature shows that this is actually a clinical marker for CLL!
@@ -193,18 +196,16 @@ ggsave(
 
 # Now let's move on to Factor 3. 
 # Let's do the same thing and plot the weight of the mutations features: 
-p_mut_f3_weights <- plot_weights(
-  MOFAobject,
-  view = "Mutations",
-  factor = 3,
-  nfeatures = 10,
-  abs = FALSE
-)
-print(p_mut_f3_weights)
-ggsave(
-  filename = "results/figures/07_plot_weights_mutations_factor3.png",
-  plot = p_mut_f3_weights,
-  width = 7, height = 4, dpi = 300
+save_plot_png(
+  "results/figures/07_plot_weights_mutations_factor3.png",
+  plot_weights(
+    MOFAobject,
+    view = "Mutations",
+    factor = 3,
+    nfeatures = 10,
+    abs = FALSE
+  ),
+  width = 2400, height = 1200, res = 300
 )
 # This shows us that a feature called trisomy12 is important for/influences CLL
 # Literature shows that this is actually a clinical marker for CLL!
@@ -224,11 +225,11 @@ p <- plot_factors(
 p <- p +
   geom_hline(yintercept = -1, linetype = "dashed") +
   geom_vline(xintercept = -0.5, linetype = "dashed") # Add quadrant guides
-print(p)
-ggsave(
-  filename = "results/figures/08_plot_factors_1_vs_3_IGHV_trisomy12.png",
-  plot = p,
-  width = 7, height = 5, dpi = 300
+
+save_plot_png(
+  "results/figures/08_plot_factors_1_vs_3_IGHV_trisomy12.png",
+  print(p),
+  width = 2100, height = 1500, res = 300
 )
 # This plot is extremely important. It classifies the patients into four different subgroups 
 # depending on their (multi-omic) molecular profile. As shown in the analysis above, 
@@ -276,11 +277,11 @@ p <- plot_factors(
   dot_size = 2.5,
   show_missing = TRUE
 )
-print(p)
-ggsave(
-  filename = "results/figures/09_plot_factors_1_vs_3_IGHV_predictions.png",
-  plot = p,
-  width = 7, height = 5, dpi = 300
+
+save_plot_png(
+  "results/figures/09_plot_factors_1_vs_3_IGHV_predictions.png",
+  print(p),
+  width = 2100, height = 1500, res = 300
 )
 ###############################################################################
 
@@ -309,30 +310,24 @@ res.negative <- run_enrichment(
 names(res.positive)
 
 # Plot results
-p_enrich_heat_pos <- plot_enrichment_heatmap(res.positive)
-print(p_enrich_heat_pos)
-ggsave(
-  filename = "results/figures/10_plot_enrichment_heatmap_positive.png",
-  plot = p_enrich_heat_pos,
-  width = 7, height = 5, dpi = 300
+save_plot_png(
+  "results/figures/10_plot_enrichment_heatmap_positive.png",
+  plot_enrichment_heatmap(res.positive),
+  width = 2100, height = 1500, res = 300
 )
 
-p_enrich_heat_neg <- plot_enrichment_heatmap(res.negative)
-print(p_enrich_heat_neg)
-ggsave(
-  filename = "results/figures/11_plot_enrichment_heatmap_negative.png",
-  plot = p_enrich_heat_neg,
-  width = 7, height = 5, dpi = 300
+save_plot_png(
+  "results/figures/11_plot_enrichment_heatmap_negative.png",
+  plot_enrichment_heatmap(res.negative),
+  width = 2100, height = 1500, res = 300
 )
 # This shows us that Factor 5 has a strong gene set signature. 
 # Let's see what gene set is enriched here.
 
-p_enrich_factor5 <- plot_enrichment(res.positive, factor = 5, max.pathways = 15)
-print(p_enrich_factor5)
-ggsave(
-  filename = "results/figures/12_plot_enrichment_factor5.png",
-  plot = p_enrich_factor5,
-  width = 7, height = 5, dpi = 300
+save_plot_png(
+  "results/figures/12_plot_enrichment_factor5.png",
+  plot_enrichment(res.positive, factor = 5, max.pathways = 15),
+  width = 2100, height = 1500, res = 300
 )
 # It seems that Factor 5 is capturing differences in the stress response of the blood cells.
 
