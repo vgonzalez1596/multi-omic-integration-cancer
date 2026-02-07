@@ -4,19 +4,12 @@
 # DNA mutations, mRNA expression, DNA methylation, and drug treament response. 
 # Goal: To train a MOFA model and then explore it to gain novel insights into CLL cancer. 
 # Perhaps we can identify features or trends that define patients and make precision medicine possible. 
-
-# See information on this tutorial here:
-#   https://www.youtube.com/watch?v=_BfHeZ0s2i0
-#   https://biofam.github.io/MOFA2/tutorials.html
-#   https://raw.githack.com/bioFAM/MOFA2_tutorials/master/R_tutorials/CLL.html
-#installed the following packages: randomForest, MOFA2, MOFAdata
 ###############################################################################
 
-# Portfolio touch: create an output directory for saved figures
+# Create an output directory for saved figures
 dir.create("results/figures", recursive = TRUE, showWarnings = FALSE)
 
-# Helper: reliably save a plot by opening a PNG device and drawing into it
-# (avoids RStudio device timing issues when running via source())
+# Helper: saving all generated plots
 save_plot_png <- function(filename, expr, width = 2100, height = 1500, res = 300) {
   png(filename, width = width, height = height, res = res)
   on.exit(dev.off(), add = TRUE)
