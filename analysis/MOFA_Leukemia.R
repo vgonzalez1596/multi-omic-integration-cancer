@@ -4,8 +4,8 @@
 # DNA mutations, mRNA expression, DNA methylation, and drug treament response. 
 # Goal: To train a MOFA model and then explore it to gain novel insights into CLL cancer. 
 # Perhaps we can identify features or trends that define patients and make precision medicine possible. 
-###############################################################################
 
+###############################################################################
 # Create an output directory for saved figures
 dir.create("results/figures", recursive = TRUE, showWarnings = FALSE)
 
@@ -47,8 +47,8 @@ lapply(CLL_data, dim)
 CLL_metadata <- fread(
   "ftp://ftp.ebi.ac.uk/pub/databases/mofa/cll_vignette/sample_metadata.txt"
 )
-###############################################################################
 
+###############################################################################
 # Now, we want to create an untrained MOFA object with our 4 views
 MOFAobject <- create_mofa(CLL_data)
 MOFAobject
@@ -78,8 +78,8 @@ train_opts$convergence_mode <- "slow"
 # Fix random seed for reproducibility
 train_opts$seed <- 42
 train_opts
-###############################################################################
 
+###############################################################################
 # Now we want to train our MOFA model! 
 # Combine all the options into final MOFA object
 #MOFAobject <- prepare_mofa(
@@ -93,8 +93,8 @@ train_opts
 MOFAobject <- readRDS(
   url("http://ftp.ebi.ac.uk/pub/databases/mofa/cll_vignette/MOFA2_CLL.rds")
 )
-###############################################################################
 
+###############################################################################
 # Now we want to begin exploring our trained MOFA model. 
 # The MOFA object consists of multiple slots where relevant data/info is stored. 
 # See documentation for information on all slots. 
@@ -144,8 +144,8 @@ save_plot_png(
   plot_variance_explained(MOFAobject, plot_total = TRUE)[[2]],
   width = 2400, height = 1200, res = 300
 )
-###############################################################################
 
+###############################################################################
 # Let's begin diving further into the model.
 # There are a few strategies to characterize the molecular etiology underlying 
 # the MOFA Factors and to relate them to the sample covariates:
@@ -200,12 +200,12 @@ save_plot_png(
   ),
   width = 2400, height = 1200, res = 300
 )
-# This shows us that a feature called trisomy12 is important for/influences CLL
+# This shows us that a feature called trisomy12 is important for/influences CLL.
 # Literature shows that this is actually a clinical marker for CLL!
 # Additional analyses to learn more about IGHV can be done, see tutorial for more.
-###############################################################################
 
-#Now that we have characterised the etiology of the two main Factors, let’s explore them together:
+###############################################################################
+#Now that we have characterized the etiology of the two main Factors, let’s explore them together:
 # Visualize samples in Factor1 vs Factor3 space using IGHV and trisomy12
 p <- plot_factors(
   MOFAobject,
@@ -229,8 +229,8 @@ save_plot_png(
 # both factors are associated with differences in the drug response assay they are are 
 # strongly linked to somatic mutations (IGHV and trisomy12) that are easy to profile in clinical practice. 
 # This is fantastic for the aim of personalised medicine.
-###############################################################################
 
+###############################################################################
 # The scatterplot of Factor 1 vs Factor 3 reveals that a few samples are missing the somatic mutation status. 
 # In this case, the doctors were not able to classify patients into their clinical subgroups. 
 # But we can now use MOFA to exploit the molecular profiles and attempt to impute the IGHV and trisomy12 status.
@@ -276,8 +276,8 @@ save_plot_png(
   print(p),
   width = 2100, height = 1500, res = 300
 )
-###############################################################################
 
+###############################################################################
 #In addition to exploring the individual weights for each factor, 
 # we can use enrichment analysis to look for signiificant associations of factors to genesets. 
 # Here, we use the Reactome genesets.
@@ -324,5 +324,4 @@ save_plot_png(
 )
 # It seems that Factor 5 is capturing differences in the stress response of the blood cells.
 
-# Portfolio touch: final completion message
 message("Done! All plots have been saved as PNGs in: results/figures/")
