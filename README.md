@@ -40,7 +40,7 @@ R, MOFA2, randomForest, ggplot2, tidyverse.
 
 `results/figures/` contains exported analysis figures
 
-`environment/install_packages.R` installs required packages
+`environment/` installs required packages and contains session information
 
 ---
 
