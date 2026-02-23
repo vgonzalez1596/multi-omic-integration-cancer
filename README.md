@@ -5,7 +5,7 @@ This repository contains a multi-omic integration project to interrogate the mol
 ---
 
 ## Project Goal
-Determine what insights can be learned about the biology of leukemia from integrating various omics datasets of patients. We also want to 1) classify patients according to their molecular profiles for precision medicine purpose and 2) predict patient mutation status using machine learning. 
+Determine what insights can be learned about the biology of leukemia from integrating various omics datasets of patients. We also want to 1) classify patients according to their molecular profiles for precision medicine purposes and 2) predict patient mutation status using machine learning. 
 
 ---
 
