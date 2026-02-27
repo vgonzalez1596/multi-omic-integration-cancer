@@ -10,7 +10,7 @@ Determine what insights can be learned about the biology of leukemia from integr
 ---
 
 ## Approach
-- Integrated 4 omics modalities (somatic mutation profiles, DNA methylation, mRNA expression, and drug response measurements) and trained the MOFA2 model.
+- Integrated 4 modalities (somatic mutation profiles, DNA methylation, mRNA expression, and drug response measurements) and trained the MOFA2 model.
 - Examined variance decomposition via the percentage of variance explained by each factor across each data modality.
 - Interpreted factors using somatic mutation feature weights.
 - Predicted missing IGHV mutation status using a Random Forest classifier trained on MOFA factor values.
